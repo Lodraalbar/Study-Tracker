@@ -42,8 +42,8 @@ const MainList = ({setAddIsOpen}) => {
               setMoreIsOpen(!moreIsOpen)
             }}/>
             <div className='bg-[#2e1757] rounded-sm'><p id='isDone' className='text-[8px] p-1'>Belum Selesai</p></div>
-              <div className={`fixed  z-50 flex items-center justify-center bg-[#853dfa] w-20 h-10 rounded-sm mt-10 text-[12px] flex flex-col gap-0.3 items-start px-[8px] transition-all duration-200 ease-out ${moreIsOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-                <button onClick={() => setAddIsOpen(true)}>Edit</button>
+              <div className={`fixed  z-50 flex items-center justify-center bg-[#853dfa] w-20 h-10 rounded-sm mt-10 text-[12px] flex flex-col gap-0.3 items-start px-[8px] transition-all duration-200 ease-out ${moreIsOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'} md:w-24 md:h-12 md:text-[14px] md:mt-8`}>
+                <button onClick={() => setAddIsOpen(true)} className='relative after:absolute after:left-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-white after:-translate-x-1/2 after:transition-all after:duration-300 hover:after:w-full'>Edit</button>
                 <button>Hapus</button>
               </div>
             </div>

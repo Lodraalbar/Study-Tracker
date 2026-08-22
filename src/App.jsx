@@ -16,12 +16,13 @@ function App() {
 
       <Navbar/>
       <Recap setAddIsOpen={setAddIsOpen}/>
+      {/* section daftar tugas */}
       <div className='py-3 flex justify-between'>
         <div id="judul-list " className='flex'>
           <img src={listIcon} alt=""  className='w-5 h-5 brightness-0 invert mt-1'/>
-          <h2 className='text-white font-semibold px-3 text-xl'>Daftar Tugas</h2>
+          <h2 className='text-white font-semibold px-3 text-xl md:text-2xl'>Daftar Tugas</h2>
         </div>
-        <button onClick={() => setIsFilterOpen(!isFilterOpen)} className='text-white bg-[#0b0a18] w-25 h-8 text-sm rounded-lg flex justify-between items-center' ><span className='mx-auto'>{filter}</span> <span className='mx-auto'>⬇️</span></button>
+        <button onClick={() => setIsFilterOpen(!isFilterOpen)} className='text-white bg-[#0b0a18] w-25 h-8 text-sm rounded-lg flex justify-between items-center hover:bg-[#853dfa] md:w-35 md:h-10 md:text-xl' ><span className='mx-auto'>{filter}</span> <span className='mx-auto'>⬇️</span></button>
         
       </div>
       {isFilterOpen && (
@@ -45,11 +46,18 @@ function App() {
         </div>
       )}
 
+      
+      <div className='grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4'>
+        <MainList setAddIsOpen={setAddIsOpen}/>
+        <MainList setAddIsOpen={setAddIsOpen}/>
+        <MainList setAddIsOpen={setAddIsOpen}/>
+      </div>
+
+
       {/* fitur pop up form tambah tugas */}
-      <MainList setAddIsOpen={setAddIsOpen}/>
       {addIsOpen && (
-        <div className="popup fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className = "bg-[#853dfa] w-[90%] max-w-[360px] h-75 rounded-xl p-4 flex flex-col items-center justify-center">
+        <div className="popup fixed inset-0 z-50 flex items-center justify-center bg-black/60 w-full">
+          <div className = "bg-[#853dfa] w-[90%] max-w-[360px] h-75 rounded-xl p-4 flex flex-col items-center justify-center md:max-w-none md:w-[550px] md:h-90">
             <div className='flex items-center justify-between  w-full '>
               <h2 className='text-white text-lg font-semibold ml-20 '>Tambah Tugas</h2>
               <button className='text-white text-lg font-semibold ml-20' onClick={() => setAddIsOpen(false)}>X</button>
