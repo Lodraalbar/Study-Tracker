@@ -10,11 +10,12 @@ function App() {
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filter, setFilter] = useState('Semua');
+  const [addIsOpen, setAddIsOpen] = useState(false);
   return (
     <>
 
       <Navbar/>
-      <Recap/>
+      <Recap setAddIsOpen={setAddIsOpen}/>
       <div className='py-3 flex justify-between'>
         <div id="judul-list " className='flex'>
           <img src={listIcon} alt=""  className='w-5 h-5 brightness-0 invert mt-1'/>
@@ -43,8 +44,33 @@ function App() {
           }}>Tugas Hari Ini</p>
         </div>
       )}
-      <MainList/>
+      <MainList setAddIsOpen={setAddIsOpen}/>
+      {addIsOpen && (
+        <div className="popup fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className = "bg-[#853dfa] w-90 h-75 rounded-xl p-4 flex flex-col items-center justify-center">
+            <div className='flex items-center justify-between  w-full '>
+              <h2 className='text-white text-lg font-semibold ml-20 '>Tambah Tugas</h2>
+              <button className='text-white text-lg font-semibold ml-20' onClick={() => setAddIsOpen(false)}>X</button>
+            </div>
+            <div className="form flex flex-col ">
+              <div className = "text-white">
+                <label htmlFor="judul" className='text-white'>Judul Tugas</label>
+                <input type="text" id="judul" name="judul" placeholder='Contoh: Belajar Matematika' className='w-full mt-1 rounded-lg bg-[#151326] border border-gray-700 px-3 py-2 outline-none focus:border-[#853dfa]' />
+              </div>
+              <div className = "text-white">
+                <label htmlFor="deskripsi" className='text-white'>Deskripsi Tugas</label>
+                <input type="text" id="deskripsi" name="deskripsi" placeholder='Contoh: Selesaikan halaman 10-15' className='w-full mt-1 rounded-lg bg-[#151326] border border-gray-700 px-3 py-2 outline-none focus:border-[#853dfa]' />
+              </div>
+              <div className = "text-white">
+                <label htmlFor="deadline" className='text-white'>Deadline</label>
+                <input type="date" id="deadline" name="deadline" className='w-full mt-1 rounded-lg bg-[#151326] border border-gray-700 px-3 py-2 outline-none focus:border-[#853dfa]' />
+              </div>
+            </div>
+            <button className='bg-[#2e1757] text-white py-1 w-75 mx-auto mt-4 rounded-xl font-medium' onClick={() => setAddIsOpen(false)}>Simpan</button>
+          </div>
 
+        </div>
+      )}
     </>
   )
 }

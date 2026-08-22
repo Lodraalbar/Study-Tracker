@@ -1,8 +1,10 @@
 import React from 'react'
 import { CalendarIcon } from 'lucide-react'
 import { MoreVerticalIcon } from 'lucide-react'
+import { useState } from "react";
 
-const MainList = () => {
+const MainList = ({setAddIsOpen}) => {
+  const [moreIsOpen, setMoreIsOpen] = useState(false);
   return (
     <div>
       <div id="list-task" className='bg-[#0b0a18] flex text-white rounded-xl justify-around items-center'>
@@ -36,10 +38,15 @@ const MainList = () => {
           </div>
         </div>
         <div className="icon h-full flex flex-col gap-8 items-end">
-            <MoreVerticalIcon/>
+            <MoreVerticalIcon onClick={(event) => {
+              setMoreIsOpen(!moreIsOpen)
+            }}/>
             <div className='bg-[#2e1757] rounded-sm'><p id='isDone' className='text-[8px] p-1'>Belum Selesai</p></div>
-        </div>
-
+              <div className={`fixed  z-50 flex items-center justify-center bg-[#853dfa] w-20 h-10 rounded-sm mt-10 text-[12px] flex flex-col gap-0.3 items-start px-[8px] transition-all duration-200 ease-out ${moreIsOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                <button onClick={() => setAddIsOpen(true)}>Edit</button>
+                <button>Hapus</button>
+              </div>
+            </div>
       </div>
     </div>
   )
