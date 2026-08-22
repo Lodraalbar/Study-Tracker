@@ -49,7 +49,7 @@ function App() {
       <MainList setAddIsOpen={setAddIsOpen}/>
       {addIsOpen && (
         <div className="popup fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className = "bg-[#853dfa] w-90 h-75 rounded-xl p-4 flex flex-col items-center justify-center">
+          <div className = "bg-[#853dfa] w-[90%] max-w-[360px] h-75 rounded-xl p-4 flex flex-col items-center justify-center">
             <div className='flex items-center justify-between  w-full '>
               <h2 className='text-white text-lg font-semibold ml-20 '>Tambah Tugas</h2>
               <button className='text-white text-lg font-semibold ml-20' onClick={() => setAddIsOpen(false)}>X</button>
