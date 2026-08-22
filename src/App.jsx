@@ -44,6 +44,8 @@ function App() {
           }}>Tugas Hari Ini</p>
         </div>
       )}
+
+      {/* fitur pop up form tambah tugas */}
       <MainList setAddIsOpen={setAddIsOpen}/>
       {addIsOpen && (
         <div className="popup fixed inset-0 z-50 flex items-center justify-center bg-black/60">
@@ -52,7 +54,7 @@ function App() {
               <h2 className='text-white text-lg font-semibold ml-20 '>Tambah Tugas</h2>
               <button className='text-white text-lg font-semibold ml-20' onClick={() => setAddIsOpen(false)}>X</button>
             </div>
-            <div className="form flex flex-col ">
+            <div className="form flex flex-col w-full ">
               <div className = "text-white">
                 <label htmlFor="judul" className='text-white'>Judul Tugas</label>
                 <input type="text" id="judul" name="judul" placeholder='Contoh: Belajar Matematika' className='w-full mt-1 rounded-lg bg-[#151326] border border-gray-700 px-3 py-2 outline-none focus:border-[#853dfa]' />
