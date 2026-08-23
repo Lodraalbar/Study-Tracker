@@ -30,11 +30,11 @@ const MainList = ({setAddIsOpen}) => {
           </label>
         </div>
         <div id="textDescription" className="flex flex-col">
-          <h1 id='titleTask' className='pt-2 font-semibold px-3'>Belajar React Dasar</h1>
+          <h1 id='titleTask' className='pt-2 font-semibold px-3 text-sm'>Belajar React Dasar</h1>
           <p id='captionTask' className='px-3 text-[12px]'>Pelajari components dan props</p>
           <div id="dateTask" className='flex py-4 px-3 gap-2'>
             <CalendarIcon className='w-4 h-4 mt-[2px]'/>
-            <p id='dateTaskInformation' className='text-sm'>12 Agustus 2026</p>
+            <p id='dateTaskInformation' className='text-xs'>12 Agustus 2026</p>
           </div>
         </div>
         <div className="icon h-full flex flex-col gap-8 items-end">
@@ -44,7 +44,7 @@ const MainList = ({setAddIsOpen}) => {
             <div className='bg-[#2e1757] rounded-sm'><p id='isDone' className='text-[8px] p-1'>Belum Selesai</p></div>
               <div className={`fixed  z-50 flex items-center justify-center bg-[#853dfa] w-20 h-10 rounded-sm mt-10 text-[12px] flex flex-col gap-0.3 items-start px-[8px] transition-all duration-200 ease-out ${moreIsOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'} md:w-24 md:h-12 md:text-[14px] md:mt-8`}>
                 <button onClick={() => setAddIsOpen(true)} className='relative after:absolute after:left-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-white after:-translate-x-1/2 after:transition-all after:duration-300 hover:after:w-full'>Edit</button>
-                <button>Hapus</button>
+                <button className='relative after:absolute after:left-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-white after:-translate-x-1/2 after:transition-all after:duration-300 hover:after:w-full'>Hapus</button>
               </div>
             </div>
       </div>

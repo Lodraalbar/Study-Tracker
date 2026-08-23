@@ -5,6 +5,7 @@ import Navbar from './components/Navbar.jsx';
 import Recap from './components/Recap.jsx';
 import MainList from './components/MainList.jsx';
 import listIcon from './assets/list.png'
+import RecapDesktop from './components/recapDekstop.jsx';
 
 function App() {
 
@@ -12,10 +13,17 @@ function App() {
   const [filter, setFilter] = useState('Semua');
   const [addIsOpen, setAddIsOpen] = useState(false);
   return (
-    <>
+    <div className="lg:px-8">
 
       <Navbar/>
-      <Recap setAddIsOpen={setAddIsOpen}/>
+      <div className = 'lg:hidden'>
+        <Recap setAddIsOpen={setAddIsOpen}  />
+      </div>
+      <div className="hidden lg:block">
+        <RecapDesktop />
+      </div>
+      
+
       {/* section daftar tugas */}
       <div className='py-3 flex justify-between'>
         <div id="judul-list " className='flex'>
@@ -47,7 +55,7 @@ function App() {
       )}
 
       
-      <div className='grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4'>
+      <div className='grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-5'>
         <MainList setAddIsOpen={setAddIsOpen}/>
         <MainList setAddIsOpen={setAddIsOpen}/>
         <MainList setAddIsOpen={setAddIsOpen}/>
@@ -81,7 +89,7 @@ function App() {
 
         </div>
       )}
-    </>
+    </div>
   )
 }
 
