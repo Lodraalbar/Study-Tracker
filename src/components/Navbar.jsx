@@ -10,7 +10,7 @@ const Navbar = ({ onLogout }) => {
 
     const [isOpen, setIsOpen] = useState(false);
     return (
-    <div className="flex items-center border-white border-b sticky top-0 z-50 pb-2">
+    <div className="flex items-center border-white border-b sticky top-0 z-50 pb-2 bg-[#04050f]">
         <div className="Burger-icon text-3xl text-white lg:hidden">
             <button onClick={() => setIsOpen(!isOpen)}>☰</button>
                                                  

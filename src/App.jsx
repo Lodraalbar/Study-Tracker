@@ -129,7 +129,7 @@ function App() {
           <img src={listIcon} alt=""  className='w-5 h-5 brightness-0 invert mt-1'/>
           <h2 className='text-white font-semibold px-3 text-xl md:text-2xl lg:text-xl'>Daftar Tugas</h2>
         </div>
-        <button onClick={() => setIsFilterOpen(!isFilterOpen)} className='text-white bg-[#0b0a18] w-25 h-8 text-sm rounded-lg flex justify-between items-center border-2 border-[#853dfa] hover:bg-[#853dfa] md:w-35  md:h-10 md:text-xl lg:w-25 lg:h-7 lg:text-[14px]' ><span className='mx-auto'>{filter}</span> <span className='mx-auto'>⬇️</span></button>
+        <button onClick={() => setIsFilterOpen(!isFilterOpen)} className='text-white bg-[#0b0a18] w-25 h-8 text-sm rounded-lg flex justify-between items-center border-2 border-[#853dfa] hover:bg-[#853dfa] md:w-35  md:h-10 md:text-xl lg:w-25 lg:h-7 lg:text-[14px]' ><span className='mx-auto text-[10px] px-[3px]'>{filter}</span> <span className='mx-auto'>⬇️</span></button>
         
       </div>
       {isFilterOpen && (
