@@ -6,7 +6,12 @@ import calendar from '../assets/calendar.png';
 
 const RecapDesktop = ({ setAddIsOpen, recap, todayLabel }) => {
   return (
+        
     <div className='flex flex-col items-center'>
+      <div id="greeting" className='w-full text-white py-3'>
+        <h1 className='text-xl font-medium'>Halo,🙌</h1>
+        <p className='text-sm '>Tetap konsisten belajar dan raih tujuanmu!</p>
+      </div>
       <div className='flex w-full h-28  text-white mt-5 mb-5 '>
         <div className= 'bg-[#0b0a18] border border-[1px] border-[#853dfa] -center w-1/4 h-full mx-2 flex items-center justify-center gap-2 rounded-2xl transition-transform duration-300 ease-out hover:-translate-y-1'>
             <div className='bg-[#853dfa] rounded-full w-10 h-10 flex justify-center items-center'><img src={totalTugas} alt="Total Tugas" className='w-8 h-8'/></div>
