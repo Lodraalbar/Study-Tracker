@@ -6,7 +6,7 @@ import dataIcon from "../assets/data.png"
 import '../App.css'
 
 
-const Navbar = () => {
+const Navbar = ({ onLogout }) => {
 
     const [isOpen, setIsOpen] = useState(false);
     return (
@@ -24,7 +24,8 @@ const Navbar = () => {
             <li><a href="#kalender" className="relative inline-block hover:text-[#853dfa] after:absolute after:-bottom-1 after:left-1/2 after:h-0.5 after:w-0 after:-translate-x-1/2 after:bg-white after:transition-all after:duration-300 hover:after:w-full">Kalender</a></li>
         </ul>
         <div className="Notification-Logo ml-auto ">
-            <button className="text-white hover:text-[#853dfa] mt-3"><Bell size={24}></Bell></button>
+            <button className="text-white hover:text-[#853dfa]"><Bell size={24}></Bell></button>
+            <button onClick={onLogout} className="ml-4 text-sm text-white hover:text-[#853dfa] bg-[#853dfa] rounded-[5px] font-semibold text-[13px]">Logout</button>
         </div>
 
         {/* navbar side */}

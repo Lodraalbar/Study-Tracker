@@ -3,7 +3,7 @@ import { CalendarIcon } from 'lucide-react'
 import { MoreVerticalIcon } from 'lucide-react'
 import { useState } from "react";
 
-const MainList = ({ task, onEdit }) => {
+const MainList = ({ task, onEdit, onDelete, onToggle }) => {
   const [moreIsOpen, setMoreIsOpen] = useState(false);
   const checkboxId = `task-${task.id}`;
   const formattedDeadline = new Date(`${task.deadline}T00:00:00`).toLocaleDateString('id-ID', {
@@ -19,6 +19,8 @@ const MainList = ({ task, onEdit }) => {
             <input
               type="checkbox"
               id={checkboxId}
+              checked={Boolean(task.completed)}
+              onChange={(event) => onToggle(task.id, event.target.checked)}
               className="peer sr-only"
             />
 
@@ -44,13 +46,13 @@ const MainList = ({ task, onEdit }) => {
           </div>
         </div>
         <div className="icon h-full flex flex-col gap-8 items-end">
-            <MoreVerticalIcon onClick={(event) => {
+            <MoreVerticalIcon onClick={() => {
               setMoreIsOpen(!moreIsOpen)
             }}/>
-            <div className='bg-[#2e1757] rounded-sm'><p id='isDone' className='text-[8px] p-1'>Belum Selesai</p></div>
+            <div className='bg-[#2e1757] rounded-sm w-20 flex justify-center shrink-0'><p id='isDone' className='text-[8px] p-1 whitespace-nowrap'>{task.completed ? 'Selesai' : 'Belum Selesai'}</p></div>
               <div className={`fixed  z-50 flex items-center justify-center bg-[#853dfa] w-20 h-10 rounded-sm mt-10 text-[12px] flex flex-col gap-0.3 items-start px-[8px] transition-all duration-200 ease-out ${moreIsOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'} md:w-24 md:h-12 md:text-[14px] md:mt-8`}>
                 <button onClick={() => onEdit(task)} className='relative after:absolute after:left-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-white after:-translate-x-1/2 after:transition-all after:duration-300 hover:after:w-full'>Edit</button>
-                <button className='relative after:absolute after:left-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-white after:-translate-x-1/2 after:transition-all after:duration-300 hover:after:w-full'>Hapus</button>
+                <button onClick={() => onDelete(task.id)} className='relative after:absolute after:left-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-white after:-translate-x-1/2 after:transition-all after:duration-300 hover:after:w-full'>Hapus</button>
               </div>
             </div>
       </div>

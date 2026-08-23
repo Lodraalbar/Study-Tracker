@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { addDoc, collection, deleteDoc, doc, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
 import './components/Navbar.jsx';
 import './App.css';
 import Navbar from './components/Navbar.jsx';
@@ -6,9 +8,13 @@ import Recap from './components/Recap.jsx';
 import MainList from './components/MainList.jsx';
 import listIcon from './assets/list.png'
 import RecapDesktop from './components/recapDekstop.jsx';
+import Login from './components/Login.jsx';
+import { auth, db } from './firebase';
 
 function App() {
 
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filter, setFilter] = useState('Semua');
   const [addIsOpen, setAddIsOpen] = useState(false);
@@ -26,15 +32,32 @@ function App() {
     setAddIsOpen(true);
   };
 
-  const handleSaveTask = (event) => {
+  useEffect(() => onAuthStateChanged(auth, (currentUser) => {
+    setUser(currentUser);
+    setAuthLoading(false);
+  }), []);
+
+  useEffect(() => {
+    if (!user) {
+      return undefined;
+    }
+
+    const tasksQuery = query(collection(db, 'tasks'), where('userId', '==', user.uid));
+    return onSnapshot(tasksQuery, (snapshot) => {
+      setTasks(snapshot.docs.map((taskDoc) => ({ id: taskDoc.id, ...taskDoc.data() })));
+    });
+  }, [user]);
+
+  const handleLogout = () => signOut(auth);
+
+  const handleSaveTask = async (event) => {
     event.preventDefault();
 
-    setTasks((currentTasks) => editingTaskId === null
-      ? [...currentTasks, { id: Date.now(), ...newTask }]
-      : currentTasks.map((task) => (
-        task.id === editingTaskId ? { ...task, ...newTask } : task
-      ))
-    );
+    if (editingTaskId === null) {
+      await addDoc(collection(db, 'tasks'), { ...newTask, completed: false, userId: user.uid });
+    } else {
+      await updateDoc(doc(db, 'tasks', editingTaskId), newTask);
+    }
     setNewTask({ title: '', description: '', deadline: '' });
     setEditingTaskId(null);
     setAddIsOpen(false);
@@ -50,15 +73,53 @@ function App() {
     setAddIsOpen(true);
   };
 
+  const handleDeleteTask = (taskId) => deleteDoc(doc(db, 'tasks', taskId));
+
+  const handleToggleTask = (taskId, completed) => updateDoc(doc(db, 'tasks', taskId), { completed });
+
+  const completedTasks = tasks.filter((task) => task.completed);
+  const currentDate = new Date();
+  const today = [
+    currentDate.getFullYear(),
+    String(currentDate.getMonth() + 1).padStart(2, '0'),
+    String(currentDate.getDate()).padStart(2, '0'),
+  ].join('-');
+  const todayTasks = tasks.filter((task) => task.deadline === today);
+  const todayLabel = currentDate.toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+  const recap = {
+    total: tasks.length,
+    completed: completedTasks.length,
+    incomplete: tasks.length - completedTasks.length,
+    today: todayTasks.length,
+  };
+  const visibleTasks = tasks.filter((task) => {
+    if (filter === 'Selesai') return task.completed;
+    if (filter === 'Belum Selesai') return !task.completed;
+    if (filter === 'Tugas Hari Ini') return task.deadline === today;
+    return true;
+  });
+
+  if (authLoading) {
+    return <div className="min-h-screen bg-[#151326] flex items-center justify-center text-white">Memuat...</div>;
+  }
+
+  if (!user) {
+    return <Login />;
+  }
+
   return (
     <div className="lg:px-8">
 
-      <Navbar/>
+      <Navbar onLogout={handleLogout}/>
       <div className = 'lg:hidden'>
-        <Recap setAddIsOpen={openAddTask}  />
+        <Recap setAddIsOpen={openAddTask} recap={recap} todayLabel={todayLabel}  />
       </div>
       <div className="hidden lg:block">
-        <RecapDesktop setAddIsOpen={openAddTask} />
+        <RecapDesktop setAddIsOpen={openAddTask} recap={recap} todayLabel={todayLabel} />
       </div>
       
 
@@ -94,8 +155,8 @@ function App() {
 
       
       <div className='grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-5'>
-        {tasks.map((task) => (
-          <MainList key={task.id} task={task} onEdit={handleEditTask}/>
+        {visibleTasks.map((task) => (
+          <MainList key={task.id} task={task} onEdit={handleEditTask} onDelete={handleDeleteTask} onToggle={handleToggleTask}/>
         ))}
       </div>
 
