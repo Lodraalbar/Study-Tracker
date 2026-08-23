@@ -4,7 +4,7 @@ import selesai from '../assets/selesai.png';
 import belumSelesai from '../assets/belum_selesai.png';
 import calendar from '../assets/calendar.png';
 
-const RecapDesktop = () => {
+const RecapDesktop = ({ setAddIsOpen }) => {
   return (
     <div className='flex flex-col items-center'>
       <div className='flex w-full h-28  text-white mt-5 mb-5 '>
@@ -38,7 +38,7 @@ const RecapDesktop = () => {
         </div>
       </div>
       <div>
-        <button className='bg-[#853dfa] py-1 w-35 mx-auto rounded-xl font-medium text-white text-[12px] hover:bg-white hover:text-[#853dfa]' >+   Tambah Tugas</button>
+        <button onClick={() => setAddIsOpen(true)} className='bg-[#853dfa] py-1 w-35 mx-auto rounded-xl font-medium text-white text-[12px] hover:bg-white hover:text-[#853dfa]' >+   Tambah Tugas</button>
       </div>
     </div>
   )
