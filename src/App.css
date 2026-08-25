@@ -39,6 +39,15 @@
   color: var(--text-main);
 }
 
+@media (max-width: 1023px) {
+  .navbar {
+    width: calc(100% + 32px);
+    margin: -16px -16px 0;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
 .navbar .text-white,
 .mobile-menu .text-white,
 .navbar .icon-button {
