@@ -12,7 +12,7 @@ const Recap = ({ setAddIsOpen, recap, todayLabel }) => {
 
     <div className='flex flex-col'>
       <div id="greeting" className='text-white py-4'>
-        <h1 className='text-2xl font-medium md:text-3xl'>Halo,lodra🙌</h1>
+        <h1 className='text-2xl font-medium md:text-3xl'>Halo,🙌</h1>
         <p className='text-sm md:text-2xl'>Tetap konsisten belajar dan raih tujuanmu!</p>
       </div>
 
