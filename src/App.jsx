@@ -14,6 +14,7 @@ import { auth, db } from './firebase';
 function App() {
 
   const [user, setUser] = useState(null);
+  const [theme, setTheme] = useState(() => localStorage.getItem('study-tracker-theme') || 'dark');
   const [authLoading, setAuthLoading] = useState(true);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filter, setFilter] = useState('Semua');
@@ -38,6 +39,10 @@ function App() {
   }), []);
 
   useEffect(() => {
+    document.body.dataset.theme = theme;
+  }, [theme]);
+
+  useEffect(() => {
     if (!user) {
       return undefined;
     }
@@ -49,6 +54,14 @@ function App() {
   }, [user]);
 
   const handleLogout = () => signOut(auth);
+
+  const handleThemeToggle = () => {
+    setTheme((currentTheme) => {
+      const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('study-tracker-theme', nextTheme);
+      return nextTheme;
+    });
+  };
 
   const handleSaveTask = async (event) => {
     event.preventDefault();
@@ -112,9 +125,9 @@ function App() {
   }
 
   return (
-    <div className="lg:px-8">
+    <div className={`app-shell ${theme === 'light' ? 'theme-light' : 'theme-dark'} lg:px-8`}>
 
-      <Navbar onLogout={handleLogout}/>
+      <Navbar onLogout={handleLogout} theme={theme} onThemeToggle={handleThemeToggle}/>
       <div className = 'lg:hidden'>
         <Recap setAddIsOpen={openAddTask} recap={recap} todayLabel={todayLabel}  />
       </div>

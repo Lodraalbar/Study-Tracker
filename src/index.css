@@ -3,5 +3,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 body {
+  background: #151326;
+  margin: 0;
+  min-width: 320px;
+  padding: 16px;
   font-family: 'Poppins', sans-serif;
+}
+
+body[data-theme='light'] {
+  background: #fff5fb;
+}
+
+#root {
+  width: 100%;
 }
