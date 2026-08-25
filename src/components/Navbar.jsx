@@ -37,7 +37,10 @@ const Navbar = ({ onLogout }) => {
                 <li className="flex "><img src={dataIcon} alt="" srcset="" className="h-8 w-8 brightness-0 invert" /><a href="" className="px-4 hover:text-black">Overview</a></li>
                 <li className="flex "><img src={calendarIcon} alt="" srcset="" className="h-8 w-8 brightness-0 invert" /><a href="" className="px-4 hover:text-black">Kalender</a></li>
             </ul>
-            <p className="mt-auto mb-20 px-4 text-center text-xs text-white/80 font-sans">Copyright © 2026 Lodra. All rights reserved.</p>
+            <p className="mt-auto mb-20 px-4 text-center text-xs text-white/80 font-sans">
+                Copyright © 2026 Lodra. All rights reserved. Instagram:
+                <a href="https://www.instagram.com/kalimasada._17/" className="text-white hover:text-black"> @kalimasada._17</a>
+            </p>
         </aside>
         
         
