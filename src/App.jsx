@@ -191,7 +191,7 @@ function App() {
 
         </div>
       )}
-      <footer className="hidden lg:block mt-12 border-t border-gray-700 py-5 text-center text-sm text-gray-400">
+      <footer className="mt-12 border-t border-gray-700 py-5 text-center text-sm text-gray-400">
         Copyright © 2026 Lodra. All rights reserved. Instagram: <a href="https://www.instagram.com/kalimasada._17/" className="text-[#853dfa] hover:text-white"> @kalimasada._17</a>
       </footer>
     </div>
