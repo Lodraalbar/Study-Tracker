@@ -1,16 +1,18 @@
-import React from 'react'
 import totalTugas from '../assets/total_tugas.png';
 import selesai from '../assets/selesai.png';
 import belumSelesai from '../assets/belum_selesai.png';
 import calendar from '../assets/calendar.png';
 
-const RecapDesktop = ({ setAddIsOpen, recap, todayLabel }) => {
+const RecapDesktop = ({ setAddIsOpen, recap, todayLabel, currentTime }) => {
   return (
         
     <div className='flex flex-col items-center'>
       <div id="greeting" className='w-full text-white py-3'>
         <h1 className='text-xl font-medium'>Halo,🙌</h1>
         <p className='text-sm '>Tetap konsisten belajar dan raih tujuanmu!</p>
+        <p className='text-lg font-semibold text-accent'> <span className='text-white'>Sekarang Jam <></></span>
+          {currentTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+        </p>
       </div>
       <div className='flex w-full h-28  text-white mt-5 mb-5 '>
         <div className= 'bg-[#0b0a18] border border-[1px] border-[#853dfa] -center w-1/4 h-full mx-2 flex items-center justify-center gap-2 rounded-2xl transition-transform duration-300 ease-out hover:-translate-y-1'>

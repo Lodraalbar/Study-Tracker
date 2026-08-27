@@ -1,11 +1,9 @@
-import React from 'react';
 import totalTugas from '../assets/total_tugas.png';
 import selesai from '../assets/selesai.png';
 import belumSelesai from '../assets/belum_selesai.png';
 import calendar from '../assets/calendar.png';
-import { useState } from "react";
 
-const Recap = ({ setAddIsOpen, recap, todayLabel }) => {
+const Recap = ({ setAddIsOpen, recap, todayLabel, currentTime }) => {
   
   return (
 // {greeting}
@@ -14,6 +12,9 @@ const Recap = ({ setAddIsOpen, recap, todayLabel }) => {
       <div id="greeting" className='text-white py-4'>
         <h1 className='text-2xl font-medium md:text-3xl'>Halo,🙌</h1>
         <p className='text-sm md:text-2xl'>Tetap konsisten belajar dan raih tujuanmu!</p>
+        <p className='text-lg font-semibold text-accent md:text-2xl'> <span className='text-white'>Sekarang Jam <></></span> 
+           {currentTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+        </p>
       </div>
 
 {/* recap box */}

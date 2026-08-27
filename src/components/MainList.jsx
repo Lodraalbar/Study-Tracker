@@ -1,4 +1,3 @@
-import React from 'react'
 import { CalendarIcon } from 'lucide-react'
 import { MoreVerticalIcon } from 'lucide-react'
 import { useState } from "react";
@@ -6,10 +5,12 @@ import { useState } from "react";
 const MainList = ({ task, onEdit, onDelete, onToggle }) => {
   const [moreIsOpen, setMoreIsOpen] = useState(false);
   const checkboxId = `task-${task.id}`;
-  const formattedDeadline = new Date(`${task.deadline}T00:00:00`).toLocaleDateString('id-ID', {
+  const formattedDeadline = new Date(task.deadline).toLocaleString('id-ID', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   });
   return (
     <div>

@@ -6,11 +6,18 @@ import dataIcon from "../assets/data.png"
 import '../App.css'
 
 
-const Navbar = ({ onLogout, theme, onThemeToggle }) => {
+const Navbar = ({ onLogout, theme, onThemeToggle, notifications = [] }) => {
 
     const [isOpen, setIsOpen] = useState(false);
+    const [notificationsOpen, setNotificationsOpen] = useState(false);
+    const handleNotificationsClick = async () => {
+        setNotificationsOpen((isVisible) => !isVisible);
+        if ('Notification' in window && Notification.permission === 'default') {
+            await Notification.requestPermission();
+        }
+    };
     return (
-    <div className="navbar flex items-center border-b sticky top-0 z-50 pb-2">
+    <div className="navbar flex items-center border-b sticky top-0 z-50 pb-2 h-17 px-2 lg:px-8">
         <div className="Burger-icon text-3xl lg:hidden">
             <button onClick={() => setIsOpen(!isOpen)}>☰</button>
                                                  
@@ -23,10 +30,24 @@ const Navbar = ({ onLogout, theme, onThemeToggle }) => {
             <li><a href="#overview" className="nav-link">Overview</a></li>
             <li><a href="#kalender" className="nav-link">Kalender</a></li>
         </ul>
-        <div className="Notification-Logo ml-auto flex items-center">
+        <div className="Notification-Logo ml-auto flex items-center relative">
             <ThemeToggle theme={theme} onToggle={onThemeToggle} desktop />
-            <button className="icon-button translate-y-2"><Bell size={24}></Bell></button>
-            <button onClick={onLogout} className="logout-button ml-4 text-sm rounded-[2px] font-semibold text-[13px] p-[2px] md:p-[10px]">Logout</button>
+            <button type="button" aria-label="Notifikasi deadline" className="icon-button relative" onClick={handleNotificationsClick}>
+                <Bell size={21}/>
+                {notifications.length > 0 && <span className="notification-badge">{notifications.length}</span>}
+            </button>
+            {notificationsOpen && (
+                <div className="notification-panel absolute right-16 top-12 z-50 w-64 rounded-lg p-3 text-sm">
+                    <p className="font-semibold mb-2">Deadline mendekat</p>
+                    {notifications.length === 0 ? <p>Tidak ada deadline terdekat.</p> : notifications.map((task) => (
+                        <div key={task.id} className="border-t border-white/20 py-2">
+                            <p className="font-medium">{task.title}</p>
+                            <p>{task.minutesLeft === 0 ? 'Sekarang' : `${task.minutesLeft} menit lagi`}</p>
+                        </div>
+                    ))}
+                </div>
+            )}
+            <button onClick={onLogout} className="logout-button ml-4 text-sm rounded-[5px] font-semibold text-[13px] p-[4px] md:p-[10px]">Logout</button>
         </div>
 
         {/* navbar side */}
