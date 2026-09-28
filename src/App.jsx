@@ -13,6 +13,7 @@ import { auth, db } from './firebase';
 import AdminPanel from './components/AdminPanel.jsx';
 
 const ADMIN_EMAIL = 'lodrakepow3@gmail.com';
+const isAdminUser = (user) => user?.email?.trim().toLowerCase() === ADMIN_EMAIL;
 
 function App() {
   if (window.location.pathname.startsWith('/admin')) {
@@ -46,7 +47,7 @@ function StudyTracker() {
   };
 
   useEffect(() => onAuthStateChanged(auth, async (currentUser) => {
-    if (currentUser?.email === ADMIN_EMAIL) {
+    if (isAdminUser(currentUser)) {
       await signOut(auth);
       setUser(null);
       setAuthLoading(false);

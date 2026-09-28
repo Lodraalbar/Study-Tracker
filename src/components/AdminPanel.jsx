@@ -4,6 +4,7 @@ import { onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword,
 import { auth, db } from '../firebase';
 
 const ADMIN_EMAIL = 'lodrakepow3@gmail.com';
+const isAdminUser = (user) => user?.email?.trim().toLowerCase() === ADMIN_EMAIL;
 
 const formatDate = (value) => value ? new Date(value).toLocaleDateString('id-ID', {
   day: 'numeric', month: 'short', year: 'numeric',
@@ -30,8 +31,8 @@ function AdminLogin() {
   };
 
   return (
-    <main className="min-h-screen bg-[#151326] flex items-center justify-center px-5 text-white">
-      <form onSubmit={submit} className="w-full max-w-md rounded-2xl bg-[#0b0a18] border border-[#853dfa] p-8 shadow-xl">
+    <main className="min-h-screen bg-[#151326] flex items-center justify-center px-3 py-6 text-white sm:px-5">
+      <form onSubmit={submit} className="w-full max-w-md rounded-2xl bg-[#0b0a18] border border-[#853dfa] p-5 shadow-xl sm:p-8">
         <p className="text-sm text-[#b99cff]">Study Tracker</p>
         <h1 className="mt-2 text-3xl font-bold">Admin panel</h1>
         <p className="mt-2 mb-7 text-sm text-gray-400">Masuk untuk memantau user dan tugas.</p>
@@ -101,30 +102,30 @@ function AdminDashboard({ onLogout }) {
     setNotice(`Link reset password dikirim ke ${email}.`);
   };
 
-  return <main className="min-h-screen bg-[#0e0d1d] px-5 py-7 text-white md:px-10">
-    <header className="mx-auto flex max-w-7xl items-center justify-between">
+  return <main className="min-h-screen bg-[#0e0d1d] px-3 py-5 text-white sm:px-5 sm:py-7 lg:px-8">
+    <header className="mx-auto flex max-w-7xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div><p className="text-sm text-[#b99cff]">Study Tracker / Admin</p><h1 className="mt-1 text-3xl font-bold">Overview</h1></div>
-      <button onClick={onLogout} className="rounded-lg border border-white/15 px-4 py-2 text-sm hover:bg-white/10">Keluar</button>
+      <button onClick={onLogout} className="w-full rounded-lg border border-white/15 px-4 py-2 text-sm hover:bg-white/10 sm:w-auto">Keluar</button>
     </header>
-    <section className="mx-auto mt-8 grid max-w-7xl grid-cols-2 gap-4 lg:grid-cols-4">
+    <section className="mx-auto mt-6 grid max-w-7xl grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
       <StatCard label="Total user" value={users.length} accent="text-[#c8b2ff]" />
       <StatCard label="Total tugas" value={tasks.length} />
       <StatCard label="Tugas selesai" value={completedTasks} accent="text-emerald-300" />
       <StatCard label="Deadline terlewat" value={overdueTasks} accent="text-red-300" />
     </section>
     {notice && <p className="mx-auto mt-5 max-w-7xl rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">{notice}</p>}
-    <section className="mx-auto mt-8 grid max-w-7xl gap-6 lg:grid-cols-[0.8fr_1.2fr]">
-      <div className="rounded-xl border border-white/10 bg-[#141226] p-5">
-        <div className="mb-4 flex items-center justify-between gap-3"><h2 className="text-xl font-semibold">Users</h2><span className="text-xs text-gray-400">{filteredUsers.length} akun</span></div>
+    <section className="mx-auto mt-6 grid max-w-7xl gap-4 lg:mt-8 lg:grid-cols-[minmax(260px,0.8fr)_minmax(0,1.2fr)] lg:gap-6">
+      <div className="min-w-0 rounded-xl border border-white/10 bg-[#141226] p-4 sm:p-5">
+        <div className="mb-4 flex items-center justify-between gap-3"><h2 className="text-xl font-semibold">Users</h2><span className="shrink-0 text-xs text-gray-400">{filteredUsers.length} akun</span></div>
         <input value={search} onChange={(event) => { setSearch(event.target.value); setSelectedUserId(null); }} placeholder="Cari email..." className="mb-4 w-full rounded-lg border border-white/10 bg-[#0e0d1d] px-3 py-2 text-sm outline-none focus:border-[#853dfa]" />
-        <div className="max-h-[460px] space-y-2 overflow-y-auto">
+        <div className="max-h-[360px] space-y-2 overflow-y-auto sm:max-h-[460px]">
           {filteredUsers.map((user) => <div key={user.id} className={`rounded-lg border p-3 transition-colors ${selectedUserId === user.id ? 'border-[#853dfa] bg-[#241743]' : 'border-white/10'}`}><button onClick={() => setSelectedUserId(user.id)} className="w-full text-left"><p className="truncate text-sm">{user.email || 'Email belum tersedia'}</p><p className="mt-1 text-xs text-[#b99cff]">Lihat tugas user ini</p></button><div className="mt-2 flex items-center justify-between text-xs text-gray-500"><span>{formatDate(user.createdAt?.toDate?.() || user.createdAt)}</span><button onClick={() => resetPassword(user.email)} className="text-[#c8b2ff] hover:text-white">Reset password</button></div></div>)}
           {!filteredUsers.length && <p className="py-8 text-center text-sm text-gray-500">Belum ada data user.</p>}
         </div>
       </div>
-      <div className="rounded-xl border border-white/10 bg-[#141226] p-5">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-xl font-semibold">{selectedUser ? `Tugas ${selectedUser.email}` : 'Semua tugas'}</h2>{selectedUser && <button onClick={() => setSelectedUserId(null)} className="mt-1 text-xs text-[#c8b2ff] hover:text-white">Tampilkan semua tugas</button>}</div><select value={taskFilter} onChange={(event) => setTaskFilter(event.target.value)} className="rounded-lg border border-white/10 bg-[#0e0d1d] px-3 py-2 text-sm"><option value="all">Semua status</option><option value="completed">Selesai</option><option value="pending">Belum selesai</option><option value="overdue">Terlambat</option></select></div>
-        <div className="overflow-x-auto"><table className="w-full min-w-[580px] text-left text-sm"><thead className="border-b border-white/10 text-xs uppercase text-gray-500"><tr><th className="py-3">Tugas</th><th>Pemilik</th><th>Deadline</th><th>Status</th><th /></tr></thead><tbody>{filteredTasks.map((task) => <tr key={task.id} className="border-b border-white/5"><td className="max-w-[180px] truncate py-3">{task.title}</td><td className="max-w-[170px] truncate text-gray-400">{userById.get(task.userId)?.email || task.userId}</td><td className="text-gray-400">{formatDate(task.deadline)}</td><td><span className={task.completed ? 'text-emerald-300' : 'text-amber-300'}>{task.completed ? 'Selesai' : 'Aktif'}</span></td><td><button onClick={() => removeTask(task.id)} className="text-red-300 hover:text-red-100">Hapus</button></td></tr>)}</tbody></table>{!filteredTasks.length && <p className="py-8 text-center text-sm text-gray-500">Tidak ada tugas yang cocok.</p>}</div>
+      <div className="min-w-0 rounded-xl border border-white/10 bg-[#141226] p-4 sm:p-5">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><h2 className="truncate text-xl font-semibold">{selectedUser ? `Tugas ${selectedUser.email}` : 'Semua tugas'}</h2>{selectedUser && <button onClick={() => setSelectedUserId(null)} className="mt-1 text-xs text-[#c8b2ff] hover:text-white">Tampilkan semua tugas</button>}</div><select value={taskFilter} onChange={(event) => setTaskFilter(event.target.value)} className="w-full rounded-lg border border-white/10 bg-[#0e0d1d] px-3 py-2 text-sm sm:w-auto"><option value="all">Semua status</option><option value="completed">Selesai</option><option value="pending">Belum selesai</option><option value="overdue">Terlambat</option></select></div>
+        <div className="overflow-x-auto"><table className="w-full min-w-[430px] text-left text-sm"><thead className="border-b border-white/10 text-xs uppercase text-gray-500"><tr><th className="py-3">Tugas</th><th className="hidden sm:table-cell">Pemilik</th><th>Deadline</th><th>Status</th><th /></tr></thead><tbody>{filteredTasks.map((task) => <tr key={task.id} className="border-b border-white/5"><td className="max-w-[150px] truncate py-3 sm:max-w-[180px]">{task.title}</td><td className="hidden max-w-[170px] truncate text-gray-400 sm:table-cell">{userById.get(task.userId)?.email || task.userId}</td><td className="whitespace-nowrap text-gray-400">{formatDate(task.deadline)}</td><td><span className={task.completed ? 'text-emerald-300' : 'text-amber-300'}>{task.completed ? 'Selesai' : 'Aktif'}</span></td><td><button onClick={() => removeTask(task.id)} className="text-red-300 hover:text-red-100">Hapus</button></td></tr>)}</tbody></table>{!filteredTasks.length && <p className="py-8 text-center text-sm text-gray-500">Tidak ada tugas yang cocok.</p>}</div>
       </div>
     </section>
   </main>;
@@ -135,6 +136,6 @@ export default function AdminPanel() {
   useEffect(() => onAuthStateChanged(auth, setUser), []);
   const logout = () => signOut(auth);
   if (user === undefined) return <div className="min-h-screen bg-[#151326]" />;
-  if (!user || user.email !== ADMIN_EMAIL) return <AdminLogin />;
+  if (!user || !isAdminUser(user)) return <AdminLogin />;
   return <AdminDashboard onLogout={logout} />;
 }
