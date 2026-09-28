@@ -12,7 +12,7 @@ import Login from './components/Login.jsx';
 import { auth, db } from './firebase';
 import AdminPanel from './components/AdminPanel.jsx';
 
-const ADMIN_EMAIL = 'admin@studytracker.local';
+const ADMIN_EMAIL = 'lodrakepow3@gmail.com';
 
 function App() {
   if (window.location.pathname.startsWith('/admin')) {

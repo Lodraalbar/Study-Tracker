@@ -3,7 +3,7 @@ import { deleteDoc, doc, onSnapshot, collection } from 'firebase/firestore';
 import { onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth, db } from '../firebase';
 
-const ADMIN_EMAIL = 'admin@studytracker.local';
+const ADMIN_EMAIL = 'lodrakepow3@gmail.com';
 
 const formatDate = (value) => value ? new Date(value).toLocaleDateString('id-ID', {
   day: 'numeric', month: 'short', year: 'numeric',
