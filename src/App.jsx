@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { addDoc, collection, deleteDoc, doc, onSnapshot, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDoc, onSnapshot, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
 import './components/Navbar.jsx';
 import './App.css';
 import Navbar from './components/Navbar.jsx';
@@ -11,11 +11,18 @@ import RecapDesktop from './components/recapDekstop.jsx';
 import Login from './components/Login.jsx';
 import { auth, db } from './firebase';
 import AdminPanel from './components/AdminPanel.jsx';
+import { applyTheme, DEFAULT_THEME } from './theme';
 
 const ADMIN_EMAIL = 'lodrakepow3@gmail.com';
 const isAdminUser = (user) => user?.email?.trim().toLowerCase() === ADMIN_EMAIL;
 
 function App() {
+  useEffect(() => {
+    getDoc(doc(db, 'settings', 'theme')).then((snapshot) => {
+      applyTheme(snapshot.exists() ? snapshot.data() : DEFAULT_THEME);
+    }).catch(() => applyTheme(DEFAULT_THEME));
+  }, []);
+
   if (window.location.pathname.startsWith('/admin')) {
     return <AdminPanel />;
   }

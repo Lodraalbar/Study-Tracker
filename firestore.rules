@@ -13,6 +13,11 @@ service cloud.firestore {
       allow update, delete: if isAdmin();
     }
 
+    match /settings/theme {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     match /tasks/{taskId} {
       allow read: if isAdmin() || (request.auth != null
         && resource.data.userId == request.auth.uid);

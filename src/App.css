@@ -5,14 +5,38 @@
 }
 
 :root {
-  --page-bg: #151326;
-  --nav-bg: #04050f;
-  --panel-bg: #0b0a18;
-  --panel-strong: #2e1757;
-  --accent: #853dfa;
-  --text-main: #ffffff;
-  --text-muted: #9ca3af;
-  --border: #4b5563;
+  --theme-dark-pageBg: #151326;
+  --theme-dark-navBg: #04050f;
+  --theme-dark-panelBg: #0b0a18;
+  --theme-dark-panelStrong: #2e1757;
+  --theme-dark-accent: #853dfa;
+  --theme-dark-accentSoft: #b99cff;
+  --theme-dark-textMain: #ffffff;
+  --theme-dark-textMuted: #9ca3af;
+  --theme-dark-border: #4b5563;
+  --theme-dark-success: #6ee7b7;
+  --theme-dark-warning: #fcd34d;
+  --theme-dark-danger: #fca5a5;
+  --theme-light-pageBg: #fff5fb;
+  --theme-light-navBg: #ffffff;
+  --theme-light-panelBg: #ffd9ea;
+  --theme-light-panelStrong: #ffb8d5;
+  --theme-light-accent: #e5488b;
+  --theme-light-accentSoft: #9f426c;
+  --theme-light-textMain: #3d2133;
+  --theme-light-textMuted: #8a6075;
+  --theme-light-border: #f2b9d2;
+  --theme-light-success: #16805c;
+  --theme-light-warning: #a16207;
+  --theme-light-danger: #b42318;
+  --page-bg: var(--theme-dark-pageBg);
+  --nav-bg: var(--theme-dark-navBg);
+  --panel-bg: var(--theme-dark-panelBg);
+  --panel-strong: var(--theme-dark-panelStrong);
+  --accent: var(--theme-dark-accent);
+  --text-main: var(--theme-dark-textMain);
+  --text-muted: var(--theme-dark-textMuted);
+  --border: var(--theme-dark-border);
 }
 
 .app-shell {
@@ -23,14 +47,14 @@
 }
 
 .theme-light {
-  --page-bg: #fff5fb;
-  --nav-bg: #ffffff;
-  --panel-bg: #ffd9ea;
-  --panel-strong: #ffb8d5;
-  --accent: #e5488b;
-  --text-main: #3d2133;
-  --text-muted: #8a6075;
-  --border: #f2b9d2;
+  --page-bg: var(--theme-light-pageBg);
+  --nav-bg: var(--theme-light-navBg);
+  --panel-bg: var(--theme-light-panelBg);
+  --panel-strong: var(--theme-light-panelStrong);
+  --accent: var(--theme-light-accent);
+  --text-main: var(--theme-light-textMain);
+  --text-muted: var(--theme-light-textMuted);
+  --border: var(--theme-light-border);
 }
 
 .navbar {
@@ -159,4 +183,23 @@
 .theme-light img.brightness-0.invert {
   filter: brightness(0);
 }
+
+/* Map existing utility colors to the editable global theme tokens. */
+.bg-\[\#151326\] { background-color: var(--page-bg) !important; }
+.bg-\[\#0b0a18\] { background-color: var(--panel-bg) !important; }
+.bg-\[\#2e1757\] { background-color: var(--panel-strong) !important; }
+.bg-\[\#0e0d1d\] { background-color: var(--page-bg) !important; }
+.bg-\[\#141226\], .bg-\[\#17152b\] { background-color: var(--panel-bg) !important; }
+.bg-\[\#853dfa\] { background-color: var(--accent) !important; }
+.border-\[\#853dfa\] { border-color: var(--accent) !important; }
+.text-\[\#b99cff\], .text-\[\#c8b2ff\] { color: var(--theme-dark-accentSoft) !important; }
+.text-gray-400, .text-gray-300 { color: var(--text-muted); }
+.border-gray-700 { border-color: var(--border); }
+.text-emerald-300 { color: var(--theme-dark-success); }
+.text-amber-300 { color: var(--theme-dark-warning); }
+.text-red-300 { color: var(--theme-dark-danger); }
+.theme-light .text-\[\#b99cff\], .theme-light .text-\[\#c8b2ff\] { color: var(--theme-light-accentSoft) !important; }
+.theme-light .text-emerald-300 { color: var(--theme-light-success); }
+.theme-light .text-amber-300 { color: var(--theme-light-warning); }
+.theme-light .text-red-300 { color: var(--theme-light-danger); }
 

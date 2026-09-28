@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import { deleteDoc, doc, onSnapshot, collection } from 'firebase/firestore';
+import { deleteDoc, doc, getDoc, onSnapshot, collection, setDoc } from 'firebase/firestore';
 import { onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { AlertTriangle, CheckCircle2, ListChecks, LogOut, Mail, Search, Users, X } from 'lucide-react';
 import { auth, db } from '../firebase';
+import { cloneTheme, DEFAULT_THEME, THEME_FIELDS } from '../theme';
 
 const ADMIN_EMAIL = 'lodrakepow3@gmail.com';
-const isAdminUser = (user) => user?.email?.trim().toLowerCase() === ADMIN_EMAIL;
 
 const formatDate = (value) => value ? new Date(value).toLocaleDateString('id-ID', {
   day: 'numeric', month: 'short', year: 'numeric',
@@ -31,8 +32,8 @@ function AdminLogin() {
   };
 
   return (
-    <main className="min-h-screen bg-[#151326] flex items-center justify-center px-3 py-6 text-white sm:px-5">
-      <form onSubmit={submit} className="w-full max-w-md rounded-2xl bg-[#0b0a18] border border-[#853dfa] p-5 shadow-xl sm:p-8">
+    <main className="min-h-screen bg-[#151326] flex items-center justify-center px-5 text-white">
+      <form onSubmit={submit} className="w-full max-w-md rounded-2xl bg-[#0b0a18] border border-[#853dfa] p-8 shadow-xl">
         <p className="text-sm text-[#b99cff]">Study Tracker</p>
         <h1 className="mt-2 text-3xl font-bold">Admin panel</h1>
         <p className="mt-2 mb-7 text-sm text-gray-400">Masuk untuk memantau user dan tugas.</p>
@@ -50,11 +51,63 @@ function AdminLogin() {
   );
 }
 
-function StatCard({ label, value, accent }) {
-  return <article className="rounded-xl border border-white/10 bg-[#17152b] p-5">
-    <p className="text-sm text-gray-400">{label}</p>
-    <p className={`mt-2 text-3xl font-bold ${accent || 'text-white'}`}>{value}</p>
+function StatCard({ label, value, accent, icon: Icon }) {
+  return <article className="rounded-xl border border-white/10 bg-[#17152b] p-3 shadow-[0_8px_24px_rgba(0,0,0,0.12)] sm:p-4">
+    <div className="flex items-start justify-between gap-2"><p className="text-[11px] text-gray-400 sm:text-xs">{label}</p>{Icon && <Icon size={15} className={accent || 'text-gray-300'} />}</div>
+    <p className={`mt-2 text-xl font-semibold tracking-tight sm:text-2xl ${accent || 'text-white'}`}>{value}</p>
   </article>;
+}
+
+function ThemeEditor() {
+  const [theme, setTheme] = useState(() => cloneTheme(DEFAULT_THEME));
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    getDoc(doc(db, 'settings', 'theme')).then((snapshot) => {
+      if (snapshot.exists()) {
+        const savedTheme = snapshot.data();
+        setTheme({
+          dark: { ...DEFAULT_THEME.dark, ...(savedTheme.dark || {}) },
+          light: { ...DEFAULT_THEME.light, ...(savedTheme.light || {}) },
+        });
+      }
+    });
+  }, []);
+
+  const updateColor = (mode, key, value) => {
+    setTheme((current) => ({ ...current, [mode]: { ...current[mode], [key]: value } }));
+    setMessage('');
+  };
+
+  const saveTheme = async () => {
+    setSaving(true);
+    setMessage('');
+    try {
+      await setDoc(doc(db, 'settings', 'theme'), theme);
+      setMessage('Tema tersimpan. Refresh halaman user untuk melihat perubahan.');
+    } catch {
+      setMessage('Tema gagal disimpan. Periksa rules Firestore.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const resetTheme = async () => {
+    if (!window.confirm('Kembalikan semua warna ke default?')) return;
+    const defaultTheme = cloneTheme(DEFAULT_THEME);
+    setTheme(defaultTheme);
+    await setDoc(doc(db, 'settings', 'theme'), defaultTheme);
+    setMessage('Warna default dipulihkan.');
+  };
+
+  return <section className="mt-5 rounded-xl border border-white/10 bg-[#141226] p-4 sm:p-5">
+    <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between"><div><h2 className="text-base font-semibold">Warna aplikasi</h2><p className="mt-0.5 text-[11px] text-gray-500">Atur tema dark dan light. Perubahan berlaku setelah refresh.</p></div><div className="flex gap-2"><button onClick={resetTheme} className="rounded-lg border border-white/10 px-3 py-2 text-[11px] text-gray-300 hover:bg-white/10">Reset default</button><button onClick={saveTheme} disabled={saving} className="rounded-lg bg-[#853dfa] px-3 py-2 text-[11px] font-medium disabled:opacity-60">{saving ? 'Menyimpan...' : 'Simpan tema'}</button></div></div>
+    <div className="mt-4 grid gap-4 sm:grid-cols-2">
+      {['dark', 'light'].map((mode) => <div key={mode} className="rounded-lg border border-white/10 bg-black/10 p-3"><p className="text-xs font-semibold capitalize">Mode {mode}</p><div className="mt-3 grid grid-cols-2 gap-2">{THEME_FIELDS.map(({ key, label }) => <label key={key} className="flex min-w-0 items-center gap-2 rounded-md bg-black/10 p-1.5"><input type="color" value={theme[mode][key]} onChange={(event) => updateColor(mode, key, event.target.value)} className="h-7 w-7 shrink-0 cursor-pointer rounded border-0 bg-transparent p-0" /><span className="min-w-0"><span className="block truncate text-[10px] text-gray-400">{label}</span><input value={theme[mode][key]} onChange={(event) => updateColor(mode, key, event.target.value)} className="w-full min-w-0 bg-transparent text-[10px] text-white outline-none" /></span></label>)}</div></div>)}
+    </div>
+    {message && <p className="mt-3 text-xs text-emerald-300">{message}</p>}
+  </section>;
 }
 
 function AdminDashboard({ onLogout }) {
@@ -82,6 +135,8 @@ function AdminDashboard({ onLogout }) {
   const selectedUser = selectedUserId ? userById.get(selectedUserId) : null;
   const completedTasks = tasks.filter((task) => task.completed).length;
   const overdueTasks = tasks.filter((task) => !task.completed && task.deadline && new Date(task.deadline) < new Date()).length;
+  const completionRate = tasks.length ? Math.round((completedTasks / tasks.length) * 100) : 0;
+  const taskCountForUser = (userId) => tasks.filter((task) => task.userId === userId).length;
   const filteredUsers = users.filter((user) => user.email?.toLowerCase().includes(search.toLowerCase()));
   const filteredTasks = tasks.filter((task) => {
     const belongsToSelectedUser = !selectedUserId || task.userId === selectedUserId;
@@ -102,30 +157,31 @@ function AdminDashboard({ onLogout }) {
     setNotice(`Link reset password dikirim ke ${email}.`);
   };
 
-  return <main className="min-h-screen bg-[#0e0d1d] px-3 py-5 text-white sm:px-5 sm:py-7 lg:px-8">
-    <header className="mx-auto flex max-w-7xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div><p className="text-sm text-[#b99cff]">Study Tracker / Admin</p><h1 className="mt-1 text-3xl font-bold">Overview</h1></div>
-      <button onClick={onLogout} className="w-full rounded-lg border border-white/15 px-4 py-2 text-sm hover:bg-white/10 sm:w-auto">Keluar</button>
+  return <main className="min-h-screen max-w-full overflow-x-hidden bg-[#0e0d1d] px-4 py-4 text-white sm:px-6 sm:py-6 md:px-10">
+    <header className="mx-auto flex max-w-7xl items-center justify-between rounded-xl border border-white/10 bg-[#141226] px-4 py-3 shadow-lg">
+      <div><p className="text-[11px] font-medium text-[#b99cff]">STUDY TRACKER / ADMIN</p><h1 className="mt-1 text-xl font-semibold tracking-tight sm:text-2xl">Overview</h1></div>
+      <button onClick={onLogout} className="flex items-center gap-1.5 rounded-lg border border-white/15 px-2.5 py-2 text-xs transition-colors hover:bg-white/10"><LogOut size={14} />Keluar</button>
     </header>
-    <section className="mx-auto mt-6 grid max-w-7xl grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
-      <StatCard label="Total user" value={users.length} accent="text-[#c8b2ff]" />
-      <StatCard label="Total tugas" value={tasks.length} />
-      <StatCard label="Tugas selesai" value={completedTasks} accent="text-emerald-300" />
-      <StatCard label="Deadline terlewat" value={overdueTasks} accent="text-red-300" />
+    <section className="mx-auto mt-4 grid max-w-7xl grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
+      <StatCard label="Total user" value={users.length} accent="text-[#c8b2ff]" icon={Users} />
+      <StatCard label="Total tugas" value={tasks.length} icon={ListChecks} />
+      <StatCard label="Selesai" value={`${completionRate}%`} accent="text-emerald-300" icon={CheckCircle2} />
+      <StatCard label="Terlambat" value={overdueTasks} accent="text-red-300" icon={AlertTriangle} />
     </section>
-    {notice && <p className="mx-auto mt-5 max-w-7xl rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">{notice}</p>}
-    <section className="mx-auto mt-6 grid max-w-7xl gap-4 lg:mt-8 lg:grid-cols-[minmax(260px,0.8fr)_minmax(0,1.2fr)] lg:gap-6">
-      <div className="min-w-0 rounded-xl border border-white/10 bg-[#141226] p-4 sm:p-5">
-        <div className="mb-4 flex items-center justify-between gap-3"><h2 className="text-xl font-semibold">Users</h2><span className="shrink-0 text-xs text-gray-400">{filteredUsers.length} akun</span></div>
-        <input value={search} onChange={(event) => { setSearch(event.target.value); setSelectedUserId(null); }} placeholder="Cari email..." className="mb-4 w-full rounded-lg border border-white/10 bg-[#0e0d1d] px-3 py-2 text-sm outline-none focus:border-[#853dfa]" />
-        <div className="max-h-[360px] space-y-2 overflow-y-auto sm:max-h-[460px]">
-          {filteredUsers.map((user) => <div key={user.id} className={`rounded-lg border p-3 transition-colors ${selectedUserId === user.id ? 'border-[#853dfa] bg-[#241743]' : 'border-white/10'}`}><button onClick={() => setSelectedUserId(user.id)} className="w-full text-left"><p className="truncate text-sm">{user.email || 'Email belum tersedia'}</p><p className="mt-1 text-xs text-[#b99cff]">Lihat tugas user ini</p></button><div className="mt-2 flex items-center justify-between text-xs text-gray-500"><span>{formatDate(user.createdAt?.toDate?.() || user.createdAt)}</span><button onClick={() => resetPassword(user.email)} className="text-[#c8b2ff] hover:text-white">Reset password</button></div></div>)}
+    {notice && <p className="mx-auto mt-5 max-w-7xl break-words rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">{notice}</p>}
+    <ThemeEditor />
+    <section className="mx-auto mt-5 grid max-w-7xl gap-4 lg:grid-cols-[0.8fr_1.2fr] lg:gap-6">
+      <div className="rounded-xl border border-white/10 bg-[#141226] p-4 sm:p-5">
+        <div className="mb-3 flex items-center justify-between gap-3"><div><h2 className="text-base font-semibold">Users</h2><p className="mt-0.5 text-[11px] text-gray-500">Pilih user untuk melihat tugas</p></div><span className="rounded-full bg-white/5 px-2 py-1 text-[11px] text-gray-400">{filteredUsers.length}</span></div>
+        <div className="relative mb-3"><Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" /><input value={search} onChange={(event) => { setSearch(event.target.value); setSelectedUserId(null); }} placeholder="Cari email user..." className="w-full rounded-lg border border-white/10 bg-[#0e0d1d] py-2.5 pl-9 pr-8 text-xs outline-none focus:border-[#853dfa]" />{search && <button onClick={() => { setSearch(''); setSelectedUserId(null); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"><X size={14} /></button>}</div>
+        <div className="max-h-[360px] space-y-1.5 overflow-y-auto sm:max-h-[460px]">
+          {filteredUsers.map((user) => <div key={user.id} className={`rounded-lg border p-2.5 transition-colors ${selectedUserId === user.id ? 'border-[#853dfa] bg-[#241743]' : 'border-white/10 bg-white/[0.015]'}`}><button onClick={() => setSelectedUserId(user.id)} className="w-full text-left"><p className="flex items-center gap-1.5 truncate text-xs font-medium"><Mail size={13} className="shrink-0 text-[#b99cff]" />{user.email || 'Email belum tersedia'}</p><p className="mt-1 text-[10px] text-gray-500">{taskCountForUser(user.id)} tugas · {formatDate(user.createdAt?.toDate?.() || user.createdAt)}</p></button><div className="mt-2 border-t border-white/10 pt-1.5 text-right"><button onClick={() => resetPassword(user.email)} className="text-[10px] text-[#c8b2ff] hover:text-white">Reset password</button></div></div>)}
           {!filteredUsers.length && <p className="py-8 text-center text-sm text-gray-500">Belum ada data user.</p>}
         </div>
       </div>
-      <div className="min-w-0 rounded-xl border border-white/10 bg-[#141226] p-4 sm:p-5">
-        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><h2 className="truncate text-xl font-semibold">{selectedUser ? `Tugas ${selectedUser.email}` : 'Semua tugas'}</h2>{selectedUser && <button onClick={() => setSelectedUserId(null)} className="mt-1 text-xs text-[#c8b2ff] hover:text-white">Tampilkan semua tugas</button>}</div><select value={taskFilter} onChange={(event) => setTaskFilter(event.target.value)} className="w-full rounded-lg border border-white/10 bg-[#0e0d1d] px-3 py-2 text-sm sm:w-auto"><option value="all">Semua status</option><option value="completed">Selesai</option><option value="pending">Belum selesai</option><option value="overdue">Terlambat</option></select></div>
-        <div className="overflow-x-auto"><table className="w-full min-w-[430px] text-left text-sm"><thead className="border-b border-white/10 text-xs uppercase text-gray-500"><tr><th className="py-3">Tugas</th><th className="hidden sm:table-cell">Pemilik</th><th>Deadline</th><th>Status</th><th /></tr></thead><tbody>{filteredTasks.map((task) => <tr key={task.id} className="border-b border-white/5"><td className="max-w-[150px] truncate py-3 sm:max-w-[180px]">{task.title}</td><td className="hidden max-w-[170px] truncate text-gray-400 sm:table-cell">{userById.get(task.userId)?.email || task.userId}</td><td className="whitespace-nowrap text-gray-400">{formatDate(task.deadline)}</td><td><span className={task.completed ? 'text-emerald-300' : 'text-amber-300'}>{task.completed ? 'Selesai' : 'Aktif'}</span></td><td><button onClick={() => removeTask(task.id)} className="text-red-300 hover:text-red-100">Hapus</button></td></tr>)}</tbody></table>{!filteredTasks.length && <p className="py-8 text-center text-sm text-gray-500">Tidak ada tugas yang cocok.</p>}</div>
+      <div className="rounded-xl border border-white/10 bg-[#141226] p-4 sm:p-5">
+        <div className="mb-3 flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><h2 className="truncate text-base font-semibold">{selectedUser ? `Tugas ${selectedUser.email}` : 'Semua tugas'}</h2>{selectedUser && <button onClick={() => setSelectedUserId(null)} className="mt-1 text-[11px] text-[#c8b2ff]">Tampilkan semua tugas</button>}</div><div className="flex flex-wrap gap-1.5"><button onClick={() => setTaskFilter('all')} className={`rounded-full px-2.5 py-1 text-[10px] ${taskFilter === 'all' ? 'bg-[#853dfa] text-white' : 'bg-white/5 text-gray-400'}`}>Semua</button><button onClick={() => setTaskFilter('completed')} className={`rounded-full px-2.5 py-1 text-[10px] ${taskFilter === 'completed' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-white/5 text-gray-400'}`}>Selesai</button><button onClick={() => setTaskFilter('pending')} className={`rounded-full px-2.5 py-1 text-[10px] ${taskFilter === 'pending' ? 'bg-amber-500/20 text-amber-300' : 'bg-white/5 text-gray-400'}`}>Aktif</button><button onClick={() => setTaskFilter('overdue')} className={`rounded-full px-2.5 py-1 text-[10px] ${taskFilter === 'overdue' ? 'bg-red-500/20 text-red-300' : 'bg-white/5 text-gray-400'}`}>Terlambat</button></div></div>
+        <div className="max-w-full overflow-hidden"><table className="w-full table-fixed text-left text-xs"><thead className="border-b border-white/10 text-[10px] uppercase text-gray-500"><tr><th className="w-[38%] py-2.5">Tugas</th><th className="hidden w-[27%] sm:table-cell">Pemilik</th><th className="w-[24%]">Deadline</th><th className="w-[23%]">Status</th><th className="w-[15%]" /></tr></thead><tbody>{filteredTasks.map((task) => <tr key={task.id} className="border-b border-white/5"><td className="max-w-0 truncate py-2.5 pr-1 font-medium">{task.title}</td><td className="hidden max-w-0 truncate text-gray-400 sm:table-cell">{userById.get(task.userId)?.email || task.userId}</td><td className="truncate whitespace-nowrap pr-1 text-[10px] text-gray-400">{formatDate(task.deadline)}</td><td className="truncate"><span className={task.completed ? 'text-emerald-300' : 'text-amber-300'}>{task.completed ? 'Selesai' : 'Aktif'}</span></td><td className="text-right"><button onClick={() => removeTask(task.id)} className="text-red-300 hover:text-red-100">Hapus</button></td></tr>)}</tbody></table>{!filteredTasks.length && <p className="py-8 text-center text-xs text-gray-500">Tidak ada tugas yang cocok.</p>}</div>
       </div>
     </section>
   </main>;
@@ -136,6 +192,6 @@ export default function AdminPanel() {
   useEffect(() => onAuthStateChanged(auth, setUser), []);
   const logout = () => signOut(auth);
   if (user === undefined) return <div className="min-h-screen bg-[#151326]" />;
-  if (!user || !isAdminUser(user)) return <AdminLogin />;
+  if (!user || user.email !== ADMIN_EMAIL) return <AdminLogin />;
   return <AdminDashboard onLogout={logout} />;
 }
