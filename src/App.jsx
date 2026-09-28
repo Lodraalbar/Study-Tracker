@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { addDoc, collection, deleteDoc, doc, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, onSnapshot, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
 import './components/Navbar.jsx';
 import './App.css';
 import Navbar from './components/Navbar.jsx';
@@ -10,9 +10,19 @@ import listIcon from './assets/list.png'
 import RecapDesktop from './components/recapDekstop.jsx';
 import Login from './components/Login.jsx';
 import { auth, db } from './firebase';
+import AdminPanel from './components/AdminPanel.jsx';
+
+const ADMIN_EMAIL = 'admin@studytracker.local';
 
 function App() {
+  if (window.location.pathname.startsWith('/admin')) {
+    return <AdminPanel />;
+  }
 
+  return <StudyTracker />;
+}
+
+function StudyTracker() {
   const [user, setUser] = useState(null);
   const [theme, setTheme] = useState(() => localStorage.getItem('study-tracker-theme') || 'dark');
   const [authLoading, setAuthLoading] = useState(true);
@@ -35,9 +45,22 @@ function App() {
     setAddIsOpen(true);
   };
 
-  useEffect(() => onAuthStateChanged(auth, (currentUser) => {
+  useEffect(() => onAuthStateChanged(auth, async (currentUser) => {
+    if (currentUser?.email === ADMIN_EMAIL) {
+      await signOut(auth);
+      setUser(null);
+      setAuthLoading(false);
+      return;
+    }
+
     setUser(currentUser);
     setAuthLoading(false);
+    if (currentUser) {
+      await setDoc(doc(db, 'users', currentUser.uid), {
+        email: currentUser.email,
+        lastLoginAt: serverTimestamp(),
+      }, { merge: true });
+    }
   }), []);
 
   useEffect(() => {

@@ -1,17 +1,25 @@
 import { useState } from 'react';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase';
+import { createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from '../firebase';
 
 const Login = () => {
   const [mode, setMode] = useState('login');
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setMessage('');
     try {
       if (mode === 'register') {
-        await createUserWithEmailAndPassword(auth, form.email, form.password);
+        const credential = await createUserWithEmailAndPassword(auth, form.email, form.password);
+        await setDoc(doc(db, 'users', credential.user.uid), {
+          email: credential.user.email,
+          createdAt: serverTimestamp(),
+        });
       } else {
         await signInWithEmailAndPassword(auth, form.email, form.password);
       }
@@ -23,6 +31,29 @@ const Login = () => {
         'auth/weak-password': 'Password harus minimal 6 karakter.',
       };
       setError(messages[firebaseError.code] || 'Terjadi kesalahan. Coba lagi.');
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    setError('');
+    setMessage('');
+    if (!form.email) {
+      setError('Masukkan email terlebih dahulu.');
+      return;
+    }
+
+    setResetLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, form.email);
+      setMessage('Link reset password sudah dikirim. Periksa inbox atau folder spam email kamu.');
+    } catch (firebaseError) {
+      const messages = {
+        'auth/invalid-email': 'Format email tidak valid.',
+        'auth/user-not-found': 'Email tersebut belum terdaftar.',
+      };
+      setError(messages[firebaseError.code] || 'Link reset password gagal dikirim. Coba lagi.');
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -65,7 +96,13 @@ const Login = () => {
               placeholder="Minimal 6 karakter"
             />
           </label>
+          {mode === 'login' && (
+            <button type="button" onClick={handleForgotPassword} disabled={resetLoading} className="self-end text-sm text-[#c8b2ff] hover:text-white disabled:opacity-60">
+              {resetLoading ? 'Mengirim link...' : 'Lupa password?'}
+            </button>
+          )}
           {error && <p className="text-sm text-red-300">{error}</p>}
+          {message && <p className="text-sm text-emerald-300">{message}</p>}
           <button type="submit" className="rounded-lg bg-[#853dfa] py-2 font-semibold hover:bg-white hover:text-[#853dfa] transition-colors">
             {mode === 'login' ? 'Login' : 'Daftar'}
           </button>
@@ -76,6 +113,7 @@ const Login = () => {
           onClick={() => {
             setMode(mode === 'login' ? 'register' : 'login');
             setError('');
+            setMessage('');
           }}
           className="mt-5 w-full text-sm text-[#c8b2ff] hover:text-white"
         >
