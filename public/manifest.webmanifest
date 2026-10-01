@@ -1,0 +1,20 @@
+{
+  "name": "Study Tracker By Albar",
+  "short_name": "Study Tracker",
+  "description": "Kelola tugas belajar dan deadline dengan lebih teratur.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#151326",
+  "theme_color": "#151326",
+  "lang": "id-ID",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
